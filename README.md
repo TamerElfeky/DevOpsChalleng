@@ -13,12 +13,6 @@ Dockerize ruby and rails app , publish and scale with K8s
 * GNU Make 
 * vm-driver KVM 2.5.0
 
-
-# Repo Branches
-* Docker-compose
-* Kubernetes: Envvars
-* Kubernetes: ConfigMaps
-
 # Tune Lab Environment (Only for minikube part)
 
  minikube start --kubernetes-version='v1.8.0' --vm-driver=kvm
