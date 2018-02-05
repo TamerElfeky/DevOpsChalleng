@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: resetdb
+spec:
+  template:
+    spec:
+      containers:
+      - name: drkiq
+        image: drkiq
+        imagePullPolicy: IfNotPresent
+        command: ["rake", "db:reset", "db:migrate"]
+        env:
+        - name: CACHE_URL
+          value: redis://redis:6379/0
+        - name: DATABASE_URL
+          value: postgresql://drkiq:yourpassword@postgres:5432/drkiq?encoding=utf8&pool=5&timeout=5000
+        - name: JOB_WORKER_URL
+          value: redis://redis:6379/0
+        - name: LISTEN_ON
+          value: 0.0.0.0:8000
+        - name: SECRET_TOKEN
+          value: asecuretokenwouldnormallygohere
+        - name: WORKER_PROCESSES
+          value: "1"
+      restartPolicy: Never
+  backoffLimit: 4

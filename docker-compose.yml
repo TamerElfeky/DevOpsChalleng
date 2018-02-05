@@ -1,0 +1,48 @@
+version: '3'
+services:
+  postgres:
+   image: postgres:9.4.5
+   environment:
+     POSTGRES_USER: drkiq
+     POSTGRES_PASSWORD: yourpassword
+   ports:
+     - '5432:5432'
+   volumes:
+     - drkiq-postgres:/var/lib/postgresql/data
+
+
+  redis:
+   image: redis:3.0.5
+   ports:
+     - '6379:6379'
+   volumes:
+     - drkiq-redis:/var/lib/redis/data
+
+  drkiq:
+   build: .
+   ports:
+     - '8000:8000'
+   depends_on:
+     - postgres
+     - redis
+   volumes:
+     - ./src:/drkiq
+   env_file:
+     - .drkiq.env
+   command: ["waitpostgres", "postgres", "--", "bundle", "exec", "unicorn", "-c", "config/unicorn.rb"]
+
+
+  sidekiq:
+   build: .
+   volumes:
+     - ./src:/drkiq
+   depends_on:
+     - postgres
+     - redis
+   env_file:
+     - .drkiq.env
+   command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+
+volumes:
+  drkiq-redis:
+  drkiq-postgres:
